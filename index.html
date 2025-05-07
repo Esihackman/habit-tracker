@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Habit Tracker</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header>
+      <h1>Habit Tracker</h1>
+      <p>Track your daily habits and build consistency</p>
+    </header>
+    
+    <div class="main-content">
+      <section class="add-habit-section">
+        <h2>Add New Habit</h2>
+        <form id="habit-form" class="habit-form">
+          <div class="form-group">
+            <label for="habit-name">Habit Name</label>
+            <input type="text" id="habit-name" placeholder="your habit" required>
+          </div>
+          
+          <div class="form-group">
+            <label for="habit-category">Category</label>
+            <select id="habit-category" required>
+              <option value="">Select a category</option>
+              <option value="health">Health</option>
+              <option value="productivity">Productivity</option>
+              <option value="education">Education</option>
+              <option value="personal">Personal</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+          
+          <div class="form-group">
+            <label for="habit-goal">Daily Goal</label>
+            <input type="text" id="habit-goal" placeholder="minutes" required>
+          </div>
+          
+          <button type="submit" id="add-habit-btn">Add Habit</button>
+        </form>
+      </section>
+      
+      <section class="habits-dashboard">
+        <div class="dashboard-header">
+          <h2>Your Habits</h2>
+          <div class="filter-options">
+            <select id="filter-category">
+              <option value="all">All Categories</option>
+              <option value="health">Health</option>
+              <option value="productivity">Productivity</option>
+              <option value="education">Education</option>
+              <option value="personal">Personal</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+        
+        <div id="habits-list" class="habits-list">
+          <div class="habits-empty">
+            <i class="fas fa-tasks"></i>
+            <p>No habits yet. Start by adding a new habit!</p>
+          </div>
+        </div>
+        
+        <div class="stats-section">
+          <div class="stat-card">
+            <h3>Total Habits</h3>
+            <div id="total-habits" class="stat-value">0</div>
+          </div>
+          <div class="stat-card">
+            <h3>Completed Today</h3>
+            <div id="completed-today" class="stat-value">0</div>
+          </div>
+          <div class="stat-card">
+            <h3>Best Streak</h3>
+            <div id="best-streak" class="stat-value">0</div>
+          </div>
+          <div class="stat-card">
+            <h3>Missed Days</h3>
+            <div id="missed-days" class="stat-value">0</div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+  
+  <!-- Edit Habit Modal -->
+  <div id="edit-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Edit Habit</h2>
+        <button class="close-modal">&times;</button>
+      </div>
+      <form id="edit-habit-form" class="habit-form">
+        <input type="hidden" id="edit-habit-id">
+        <div class="form-group">
+          <label for="edit-habit-name">Habit Name</label>
+          <input type="text" id="edit-habit-name" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="edit-habit-category">Category</label>
+          <select id="edit-habit-category" required>
+            <option value="health">Health</option>
+            <option value="productivity">Productivity</option>
+            <option value="education">Education</option>
+            <option value="personal">Personal</option>
+            <option value="other">Other</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="edit-habit-goal">Daily Goal</label>
+          <input type="text" id="edit-habit-goal" required>
+        </div>
+        
+        <button type="submit">Save Changes</button>
+      </form>
+    </div>
+  </div>
+  
+  <script type="module" src="js/main.js"></script>
+</body>
+</html>
