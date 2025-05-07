@@ -10,6 +10,7 @@ const editHabitForm = document.getElementById('edit-habit-form');
 const totalHabitsElement = document.getElementById('total-habits');
 const completedTodayElement = document.getElementById('completed-today');
 const bestStreakElement = document.getElementById('best-streak');
+const missedDaysElement = document.getElementById('missed-days');
 const progressBarElement = document.getElementById('progress-bar');
 const completedCountElement = document.getElementById('completed-count');
 const totalCountElement = document.getElementById('total-count');
@@ -115,7 +116,7 @@ export const renderHabits = () => {
       </div>
     `;
     
-   
+    
     const completeBtn = habitElement.querySelector('.complete-btn');
     const editBtn = habitElement.querySelector('.edit-btn');
     const deleteBtn = habitElement.querySelector('.delete-btn');
@@ -180,7 +181,7 @@ const handleEditHabit = (e) => {
   closeEditModal();
   renderHabits();
   updateStats();
-  updateProgressBar();
+  updateProgressBar(); 
 };
 
 
@@ -190,6 +191,7 @@ const updateStats = () => {
   totalHabitsElement.textContent = stats.total;
   completedTodayElement.textContent = stats.completedToday;
   bestStreakElement.textContent = stats.bestStreak;
+  missedDaysElement.textContent = stats.missedDays || 0; 
 };
 
 
@@ -198,8 +200,10 @@ const updateProgressBar = () => {
   const totalHabits = stats.total;
   const completedHabits = stats.completedToday;
   
+  
   completedCountElement.textContent = completedHabits;
   totalCountElement.textContent = totalHabits;
+  
   
   const progressPercentage = totalHabits > 0 ? (completedHabits / totalHabits) * 100 : 0;
   progressBarElement.style.width = `${progressPercentage}%`;
