@@ -1,8 +1,14 @@
 const HABITS_STORAGE_KEY = 'habitTracker_habits';
 
+
 export const getHabits = () => {
   const habitsJson = localStorage.getItem(HABITS_STORAGE_KEY);
   return habitsJson ? JSON.parse(habitsJson) : [];
+};
+
+export const getHabit = (id) => {
+  const habits = getHabits();
+  return habits.find(habit => habit.id === id);
 };
 
 export const saveHabits = (habits) => {
@@ -13,85 +19,126 @@ export const addHabit = (habit) => {
   const habits = getHabits();
   const updatedHabits = [...habits, habit];
   saveHabits(updatedHabits);
-  return updatedHabits;
+  return habit;
 };
 
-export const updateHabit = (id, updatedHabit) => {
+export const updateHabit = (id, updates) => {
   const habits = getHabits();
   const updatedHabits = habits.map(habit => 
-    habit.id === id ? { ...habit, ...updatedHabit } : habit
+    habit.id === id ? { ...habit, ...updates } : habit
   );
   saveHabits(updatedHabits);
-  return updatedHabits;
+  return updatedHabits.find(habit => habit.id === id); 
 };
 
 export const deleteHabit = (id) => {
   const habits = getHabits();
   const updatedHabits = habits.filter(habit => habit.id !== id);
   saveHabits(updatedHabits);
-  return updatedHabits;
+  return true; 
 };
 
-export const completeHabit = (id) => {
+
+export const toggleHabitCompletion = (id, date) => {
   const habits = getHabits();
-  const today = new Date().toISOString().split('T')[0]; 
+  const dateStr = date instanceof Date ? date.toISOString().split('T')[0] : date;
   
   const updatedHabits = habits.map(habit => {
     if (habit.id === id) {
+      const isCompleted = habit.completedDates?.includes(dateStr) || false;
+      let completedDates, missedDates;
       
-      const isAlreadyCompleted = habit.completedDates?.includes(today);
-      
-      if (isAlreadyCompleted) {
-        
-        return {
-          ...habit,
-          completedDates: habit.completedDates.filter(date => date !== today),
-          currentStreak: Math.max(0, habit.currentStreak - 1)
-        };
+      if (isCompleted) {
+        completedDates = habit.completedDates.filter(d => d !== dateStr);
+        missedDates = habit.missedDates?.filter(d => d !== dateStr) || [];
       } else {
-        
-        const completedDates = [...(habit.completedDates || []), today];
-        
-    
-        let currentStreak = habit.currentStreak || 0;
-        currentStreak++;
-        
-        
-        const bestStreak = Math.max(currentStreak, habit.bestStreak || 0);
-        
-        return {
-          ...habit,
-          completedDates,
-          currentStreak,
-          bestStreak
-        };
+        completedDates = [...(habit.completedDates || []), dateStr];
+        missedDates = habit.missedDates?.filter(d => d !== dateStr) || [];
       }
+      
+      return {
+        ...habit,
+        completedDates,
+        missedDates,
+        lastCompleted: isCompleted ? null : dateStr
+      };
     }
     return habit;
+  });
+  
+  saveHabits(updatedHabits);
+  return updatedHabits.find(habit => habit.id === id);
+};
+
+export const updateHabitDates = (id, dates) => {
+  const habits = getHabits();
+  const updatedHabits = habits.map(habit => {
+    if (habit.id === id) {
+      return {
+        ...habit,
+        completedDates: dates,
+        missedDates: habit.missedDates?.filter(d => dates.includes(d)) || []
+      };
+    }
+    return habit;
+  });
+  
+  saveHabits(updatedHabits);
+  return updatedHabits.find(habit => habit.id === id);
+};
+
+export const markMissedDays = () => {
+  const habits = getHabits();
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  
+  const updatedHabits = habits.map(habit => {
+    const createdDate = new Date(habit.createdAt);
+    createdDate.setHours(0, 0, 0, 0);
+    
+    let currentDate = new Date(createdDate);
+    const missedDates = [];
+    
+    while (currentDate <= today) {
+      const dateStr = currentDate.toISOString().split('T')[0];
+      const dayOfWeek = currentDate.getDay();
+      
+      if (habit.days?.includes(dayOfWeek)) {
+        if (!habit.completedDates?.includes(dateStr)) {
+          missedDates.push(dateStr);
+        }
+      }
+      
+      currentDate.setDate(currentDate.getDate() + 1);
+    }
+    
+    return {
+      ...habit,
+      missedDates: Array.from(new Set(missedDates)) 
+    };
   });
   
   saveHabits(updatedHabits);
   return updatedHabits;
 };
 
-export const getStats = () => {
+export const getStats = (date) => {
   const habits = getHabits();
-  const today = new Date().toISOString().split('T')[0];
+  const dateStr = date instanceof Date ? date.toISOString().split('T')[0] : date;
+  const dayOfWeek = new Date(dateStr).getDay();
   
-  const totalMissedDays = habits.reduce((total, habit) => {
-    return total + (habit.missedDays || 0);
-  }, 0);
+  const relevantHabits = habits.filter(habit => 
+    habit.days?.includes(dayOfWeek)
+  );
   
-  const stats = {
-    total: habits.length,
-    completedToday: habits.filter(habit => 
-      habit.completedDates?.includes(today)
+  return {
+    total: relevantHabits.length,
+    completedToday: relevantHabits.filter(habit => 
+      habit.completedDates?.includes(dateStr)
     ).length,
-    bestStreak: Math.max(0, ...habits.map(habit => habit.bestStreak || 0)),
-    missedDays: totalMissedDays
+    bestStreak: Math.max(0, ...relevantHabits.map(h => h.bestStreak || 0)),
+    currentStreak: Math.max(0, ...relevantHabits.map(h => h.currentStreak || 0))
   };
-  
-  return stats;
 };
 
 export const resetAllData = () => {

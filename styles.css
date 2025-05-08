@@ -1,5 +1,5 @@
 :root {
-  --primary-color: #4361ee;
+  --primary-color: #112074;
   --primary-light: #4361ee20;
   --secondary-color: #3a0ca3;
   --text-color: #2b2d42;
@@ -156,6 +156,189 @@ header p {
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
+
+#date-picker {
+  padding: 8px 12px;
+  border: 1px solid var(--neutral-color);
+  border-radius: 5px;
+  margin-left: 10px;
+  background-color: var(--card-bg);
+  color: var(--text-color);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+#date-picker:hover {
+  border-color: var(--primary-color);
+}
+
+#date-picker:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 2px var(--primary-light);
+}
+
+
+#habit-calendar {
+  margin: 20px 0;
+  min-height: 300px;
+}
+
+
+.flatpickr-calendar {
+  background: var(--card-bg);
+  box-shadow: var(--shadow);
+  border: none;
+  color: var(--text-color);
+}
+
+.flatpickr-day {
+  color: var(--text-color);
+}
+
+.flatpickr-day:hover {
+  background: var(--primary-light);
+  border-color: var(--primary-light);
+}
+
+.flatpickr-day.today {
+  border-color: var(--primary-color);
+}
+
+.flatpickr-day.today:hover {
+  background: var(--primary-color);
+  color: white;
+}
+
+.flatpickr-day.selected, 
+.flatpickr-day.selected:hover {
+  background: var(--primary-color);
+  border-color: var(--primary-color);
+  color: white;
+}
+
+.flatpickr-day.completed {
+  background: var(--success-color);
+  border-color: var(--success-color);
+  color: white;
+}
+
+.flatpickr-day.missed {
+  background: var(--warning-color);
+  border-color: var(--warning-color);
+  color: white;
+}
+
+.flatpickr-day.disabled, 
+.flatpickr-day.disabled:hover {
+  color: rgba(var(--text-color), 0.3);
+}
+
+.flatpickr-months .flatpickr-month {
+  color: var(--text-color);
+}
+
+.flatpickr-months .flatpickr-prev-month,
+.flatpickr-months .flatpickr-next-month {
+  color: var(--text-color);
+  fill: var(--text-color);
+}
+
+.flatpickr-months .flatpickr-prev-month:hover,
+.flatpickr-months .flatpickr-next-month:hover {
+  color: var(--primary-color);
+  fill: var(--primary-color);
+}
+
+.flatpickr-current-month .flatpickr-monthDropdown-months {
+  background: var(--card-bg);
+  color: var(--text-color);
+}
+
+.flatpickr-current-month input.cur-year {
+  color: var(--text-color);
+}
+
+.days-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin-bottom: 10px;
+}
+
+.day-btn {
+  flex: 1 0 calc(25% - 5px); 
+  padding: 8px 2px;
+}
+
+
+.day-btn:nth-child(n+5) {
+  flex: 1 0 calc(33.333% - 5px);
+}
+
+
+@media (max-width: 400px) {
+  .day-btn {
+    flex: 1 0 calc(25% - 5px); 
+    padding: 6px 2px;
+    font-size: 0.75rem;
+  }
+}
+
+.days-selector {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 5px;
+  margin: 10px 0;
+}
+
+.day-btn {
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  background: #f5f5f5;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.day-btn.active {
+  background: #4361ee;
+  color: white;
+  border-color: #4361ee;
+}
+.day-btn:hover {
+  background: var(--primary-light);
+  border-color: var(--primary-color);
+}
+
+.day-btn.active {
+  background: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+
+#selected-date-display {
+  color: var(--primary-color);
+  font-weight: 600;
+}
+
+
+#save-calendar {
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+#save-calendar:hover {
+  background-color: var(--secondary-color);
+}
 .habit-item:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow);
@@ -268,6 +451,8 @@ header p {
   background-color: #d91a70;
 }
 
+ 
+
 .stats-section {
   margin-top: 2rem;
   display: grid;
@@ -357,3 +542,9 @@ header p {
   background-color: var(--success-color);
   color: white;
 }
+Icon Styles
+.fas, .far {
+  margin-right: 5px;
+  transition: all 0.2s;
+}
+

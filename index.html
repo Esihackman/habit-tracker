@@ -4,6 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Habit Tracker</title>
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <link rel="stylesheet" href="styles.css">
 </head>
@@ -17,10 +18,11 @@
     <div class="main-content">
       <section class="add-habit-section">
         <h2>Add New Habit</h2>
+        
         <form id="habit-form" class="habit-form">
           <div class="form-group">
             <label for="habit-name">Habit Name</label>
-            <input type="text" id="habit-name" placeholder="your habit" required>
+            <input type="text" id="habit-name" placeholder="Your habit" required>
           </div>
           
           <div class="form-group">
@@ -40,6 +42,20 @@
             <input type="text" id="habit-goal" placeholder="minutes" required>
           </div>
           
+          <div class="form-group">
+            <label for="habit-days">Days to Track</label>
+            <div class="days-selector">
+              <button type="button" class="day-btn" data-day="0">Sun</button>
+              <button type="button" class="day-btn" data-day="1">Mon</button>
+              <button type="button" class="day-btn" data-day="2">Tue</button>
+              <button type="button" class="day-btn" data-day="3">Wed</button>
+              <button type="button" class="day-btn" data-day="4">Thu</button>
+              <button type="button" class="day-btn" data-day="5">Fri</button>
+              <button type="button" class="day-btn" data-day="6">Sat</button>
+            </div>
+            <input type="hidden" id="selected-days">
+          </div>
+          
           <button type="submit" id="add-habit-btn">Add Habit</button>
         </form>
       </section>
@@ -56,18 +72,20 @@
               <option value="personal">Personal</option>
               <option value="other">Other</option>
             </select>
+            <input type="text" id="date-picker" placeholder="Select date">
           </div>
         </div>
         
         <div class="progress-container">
           <div class="progress-header">
-            <div class="progress-title">Today's Progress</div>
+            <div class="progress-title"><span id="selected-date-display">Today's</span> Progress</div>
             <div class="progress-stats"><span id="completed-count">0</span>/<span id="total-count">0</span> habits completed</div>
           </div>
           <div class="progress-bar-outer">
             <div class="progress-bar-inner" id="progress-bar" style="width: 0%"></div>
           </div>
         </div>
+        
         <div id="habits-list" class="habits-list">
           <div class="habits-empty">
             <i class="fas fa-tasks"></i>
@@ -96,7 +114,6 @@
       </section>
     </div>
   </div>
-  
   
   <div id="edit-modal" class="modal">
     <div class="modal-content">
@@ -127,11 +144,41 @@
           <input type="text" id="edit-habit-goal" required>
         </div>
         
+        <div class="form-group">
+          <label>Days to Track</label>
+          <div class="days-selector">
+            <button type="button" class="day-btn" data-day="0">Sun</button>
+            <button type="button" class="day-btn" data-day="1">Mon</button>
+            <button type="button" class="day-btn" data-day="2">Tue</button>
+            <button type="button" class="day-btn" data-day="3">Wed</button>
+            <button type="button" class="day-btn" data-day="4">Thu</button>
+            <button type="button" class="day-btn" data-day="5">Fri</button>
+            <button type="button" class="day-btn" data-day="6">Sat</button>
+          </div>
+          <input type="hidden" id="edit-selected-days">
+        </div>
+        
         <button type="submit">Save Changes</button>
       </form>
     </div>
   </div>
   
+  <div id="calendar-modal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h2>Track Habit Completion</h2>
+        <button class="close-modal">&times;</button>
+      </div>
+      <div class="modal-body">
+        <div id="habit-calendar"></div>
+        <div class="form-group">
+          <button id="save-calendar" class="primary-btn">Save Changes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/flatpickr/4.6.13/flatpickr.min.js"></script>
   <script type="module" src="js/main.js"></script>
 </body>
 </html>
