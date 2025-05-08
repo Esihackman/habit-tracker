@@ -63,6 +63,7 @@ header p {
   border-radius: 10px;
   padding: 1.5rem;
   box-shadow: var(--shadow);
+  width: 100%; 
 }
 
 .add-habit-section h2 {
@@ -74,12 +75,14 @@ header p {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  width: 100%;
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  width: 100%;
 }
 
 .form-group label {
@@ -93,6 +96,7 @@ header p {
   border-radius: 5px;
   border: 1px solid #ddd;
   font-size: 1rem;
+  width: 100%; 
 }
 
 .habit-form button {
@@ -156,7 +160,6 @@ header p {
   transition: transform 0.2s, box-shadow 0.2s;
 }
 
-
 #date-picker {
   padding: 8px 12px;
   border: 1px solid var(--neutral-color);
@@ -167,6 +170,8 @@ header p {
   font-size: 0.9rem;
   cursor: pointer;
   transition: border-color 0.3s;
+  width: 100%;
+  max-width: 100%;
 }
 
 #date-picker:hover {
@@ -179,12 +184,10 @@ header p {
   box-shadow: 0 0 0 2px var(--primary-light);
 }
 
-
 #habit-calendar {
   margin: 20px 0;
   min-height: 300px;
 }
-
 
 .flatpickr-calendar {
   background: var(--card-bg);
@@ -264,49 +267,26 @@ header p {
   display: flex;
   flex-wrap: wrap;
   gap: 5px;
-  margin-bottom: 10px;
-}
-
-.day-btn {
-  flex: 1 0 calc(25% - 5px); 
-  padding: 8px 2px;
-}
-
-
-.day-btn:nth-child(n+5) {
-  flex: 1 0 calc(33.333% - 5px);
-}
-
-
-@media (max-width: 400px) {
-  .day-btn {
-    flex: 1 0 calc(25% - 5px); 
-    padding: 6px 2px;
-    font-size: 0.75rem;
-  }
-}
-
-.days-selector {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 5px;
   margin: 10px 0;
+  width: 100%;
 }
 
 .day-btn {
-  padding: 8px 12px;
+  flex: 1 0 calc(25% - 5px);
+  padding: 8px 2px;
+  text-align: center;
   border: 1px solid #ddd;
   background: #f5f5f5;
   border-radius: 4px;
   cursor: pointer;
   transition: all 0.2s;
+  font-size: 0.9rem;
 }
 
-.day-btn.active {
-  background: #4361ee;
-  color: white;
-  border-color: #4361ee;
+.day-btn:nth-child(n+5) {
+  flex: 1 0 calc(33.333% - 5px);
 }
+
 .day-btn:hover {
   background: var(--primary-light);
   border-color: var(--primary-color);
@@ -318,12 +298,10 @@ header p {
   border-color: var(--primary-color);
 }
 
-
 #selected-date-display {
   color: var(--primary-color);
   font-weight: 600;
 }
-
 
 #save-calendar {
   background-color: var(--primary-color);
@@ -334,11 +312,13 @@ header p {
   font-weight: 600;
   cursor: pointer;
   transition: background-color 0.3s;
+  width: 100%;
 }
 
 #save-calendar:hover {
   background-color: var(--secondary-color);
 }
+
 .habit-item:hover {
   transform: translateY(-2px);
   box-shadow: var(--shadow);
@@ -451,8 +431,6 @@ header p {
   background-color: #d91a70;
 }
 
- 
-
 .stats-section {
   margin-top: 2rem;
   display: grid;
@@ -542,9 +520,100 @@ header p {
   background-color: var(--success-color);
   color: white;
 }
-Icon Styles
+
+
 .fas, .far {
   margin-right: 5px;
   transition: all 0.2s;
 }
 
+@media (max-width: 767px) {
+  .main-content {
+    grid-template-columns: 1fr; 
+    gap: 1.5rem;
+  }
+  
+  .add-habit-section {
+    padding: 1.25rem; 
+  }
+  
+  .habit-form button {
+    width: 100%; 
+    padding: 0.85rem; 
+  }
+  
+  .dashboard-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .filter-options {
+    width: 100%;
+  }
+  
+  .filter-options select {
+    flex-grow: 1;
+  }
+  
+  .habit-item {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+  
+  .habit-actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+
+
+@media (max-width: 480px) {
+  .container {
+    padding: 1rem 0.75rem; 
+  }
+  
+  header h1 {
+    font-size: 2rem;
+  }
+  
+  .add-habit-section h2,
+  .dashboard-header h2 {
+    font-size: 1.3rem; 
+  }
+  
+  .habit-form {
+    gap: 0.75rem; 
+  }
+  
+  .day-btn {
+    font-size: 0.8rem;
+    padding: 6px 2px;
+  }
+  
+  .modal-content {
+    padding: 1.5rem;
+  }
+  
+  .stat-card {
+    padding: 1rem;
+  }
+  
+  .stat-value {
+    font-size: 1.5rem;
+  }
+}
+
+
+@media (max-width: 350px) {
+  .day-btn {
+    flex: 1 0 calc(33.333% - 5px);
+    font-size: 0.75rem;
+  }
+  
+  .action-btn {
+    width: 2rem;
+    height: 2rem;
+  }
+}

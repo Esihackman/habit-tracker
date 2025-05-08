@@ -79,7 +79,7 @@ const initDaySelectors = () => {
     btn.addEventListener('click', function() {
       this.classList.toggle('active');
       
-      // Determine which form the day selector belongs to
+     
       const form = this.closest('form');
       if (form) {
         const selectedDaysInput = form.querySelector('[id$="selected-days"]');
@@ -308,7 +308,7 @@ const openCalendarModal = (habit) => {
     mode: "multiple",
     defaultDate: completedDates,
     dateFormat: "Y-m-d",
-    onDayCreate: function(dObj, dStr, fp, dayElem) {
+    onDayCreate: function(_dObj, _dStr, _fp, dayElem) {
       const dateStr = dayElem.dateObj.toISOString().split('T')[0];
       if (completedDates.includes(dateStr)) {
         dayElem.classList.add('completed');
