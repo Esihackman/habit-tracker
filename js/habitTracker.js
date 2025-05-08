@@ -1,8 +1,15 @@
 import * as storage from './storage.js';
 
+
+
+
+const generateId = () => {
+  return Date.now().toString(36) + Math.random().toString(36).substring(2);
+};
+
 export const createHabit = (name, category, goal, days = []) => {
   const habit = {
-    id: generateId(),
+    id: generateId(),  
     name: name.trim(),
     category: category.trim(),
     goal: goal.trim(),
@@ -18,6 +25,7 @@ export const createHabit = (name, category, goal, days = []) => {
   storage.addHabit(habit);
   return habit;
 };
+
 
 export const updateHabit = (id, updates) => {
   return storage.updateHabit(id, updates);
@@ -158,43 +166,101 @@ export const getStats = (date = new Date()) => {
   };
 };
 
+
+
+
 export const markMissedDays = () => {
   const habits = getAllHabits();
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   
+ 
+  let updatesApplied = false;
+  
   habits.forEach(habit => {
+   
     const createdDate = new Date(habit.createdAt);
     createdDate.setHours(0, 0, 0, 0);
     
-    let currentDate = new Date(createdDate);
-    const missedDates = [];
     
-    while (currentDate <= today) {
+    const lastCheckDate = habit.lastCheckDate ? new Date(habit.lastCheckDate) : createdDate;
+    let startDate = new Date(lastCheckDate);
+    
+  
+    if (isSameDay(startDate, today)) {
+      return;
+    }
+    
+    const missedDates = [...(habit.missedDates || [])];
+    let currentDate = new Date(startDate);
+    let datesUpdated = false;
+    
+    
+    while (currentDate < today) {
       const dateStr = currentDate.toISOString().split('T')[0];
       const dayOfWeek = currentDate.getDay();
       
-      if (habit.days.includes(dayOfWeek) && !habit.completedDates.includes(dateStr)) {
+      
+      if (habit.days.includes(dayOfWeek) && 
+          !habit.completedDates.includes(dateStr) && 
+          !missedDates.includes(dateStr)) {
         missedDates.push(dateStr);
+        datesUpdated = true;
       }
       
       currentDate.setDate(currentDate.getDate() + 1);
     }
     
-    if (JSON.stringify(habit.missedDates) !== JSON.stringify(missedDates)) {
-      habit.missedDates = missedDates;
-      storage.updateHabit(habit.id, { missedDates });
+    
+    if (datesUpdated) {
+      storage.updateHabit(habit.id, { 
+        missedDates,
+        lastCheckDate: today.toISOString() 
+      });
+      updatesApplied = true;
+    } else {
+      
+      storage.updateHabit(habit.id, { 
+        lastCheckDate: today.toISOString() 
+      });
     }
   });
+  
+  return updatesApplied;
+};
+
+function isSameDay(date1, date2) {
+  return date1.getFullYear() === date2.getFullYear() &&
+         date1.getMonth() === date2.getMonth() &&
+         date1.getDate() === date2.getDate();
+}
+
+export const initializeApp = () => {
+  markMissedDays();
+  
+  
+  scheduleNextDailyCheck();
 };
 
 
-markMissedDays();
+function scheduleNextDailyCheck() {
+  
+  const now = new Date();
+  const tomorrow = new Date(now);
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  tomorrow.setHours(0, 0, 0, 0);
+  
+  const timeUntilMidnight = tomorrow - now;
+  setTimeout(() => {
+    markMissedDays();
+    scheduleNextDailyCheck(); 
+  }, timeUntilMidnight);
+}
 
-const generateId = () => {
-  return Date.now().toString(36) + Math.random().toString(36).substring(2);
+
+export const checkMissedDays = () => {
+  return markMissedDays();
 };
 
-export const resetAllData = () => {
-  storage.resetAllData();
-};
+
+initializeApp();

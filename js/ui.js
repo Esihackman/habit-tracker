@@ -1,5 +1,3 @@
-
-
 import * as habitTracker from './habitTracker.js';
 
 const habitForm = document.getElementById('habit-form');
@@ -28,13 +26,11 @@ export const initUI = () => {
   setupEventListeners();
 };
 
-
 const setupEventListeners = () => {
   habitForm.addEventListener('submit', handleAddHabit);
   filterCategory.addEventListener('change', handleFilterChange);
   closeModalBtn.addEventListener('click', closeEditModal);
   editHabitForm.addEventListener('submit', handleEditHabit);
-  
   
   window.addEventListener('click', (e) => {
     if (e.target === editModal) closeEditModal();
@@ -42,11 +38,10 @@ const setupEventListeners = () => {
   });
 };
 
-
 const initDatePicker = () => {
   flatpickr(datePicker, {
     defaultDate: "today",
-    onChange: function(selectedDates, dateStr) {
+    onChange: function(_selectedDates, dateStr) {
       updateDateDisplay(dateStr);
       renderHabits();
       updateStats();
@@ -54,10 +49,8 @@ const initDatePicker = () => {
     }
   });
   
-  
   updateDateDisplay(new Date().toISOString().split('T')[0]);
 };
-
 
 const updateDateDisplay = (dateStr) => {
   const date = new Date(dateStr);
@@ -79,23 +72,30 @@ const updateDateDisplay = (dateStr) => {
   }
 };
 
-
 const initDaySelectors = () => {
   const dayButtons = document.querySelectorAll('.day-btn');
   
   dayButtons.forEach(btn => {
     btn.addEventListener('click', function() {
       this.classList.toggle('active');
-      updateSelectedDaysInput();
+      
+      // Determine which form the day selector belongs to
+      const form = this.closest('form');
+      if (form) {
+        const selectedDaysInput = form.querySelector('[id$="selected-days"]');
+        if (selectedDaysInput) {
+          updateSelectedDaysInput(selectedDaysInput.id);
+        }
+      }
     });
   });
 };
 
-
-const updateSelectedDaysInput = () => {
-  const activeButtons = document.querySelectorAll('.day-btn.active');
+const updateSelectedDaysInput = (inputId = 'selected-days') => {
+  const formSelector = inputId === 'edit-selected-days' ? '#edit-habit-form' : '#habit-form';
+  const activeButtons = document.querySelectorAll(`${formSelector} .day-btn.active`);
   const selectedDays = Array.from(activeButtons).map(btn => btn.dataset.day);
-  document.getElementById('selected-days').value = selectedDays.join(',');
+  document.getElementById(inputId).value = selectedDays.join(',');
 };
 
 const handleAddHabit = (e) => {
@@ -104,7 +104,6 @@ const handleAddHabit = (e) => {
   const name = document.getElementById('habit-name').value.trim();
   const category = document.getElementById('habit-category').value;
   const goal = document.getElementById('habit-goal').value.trim();
-  
   
   const selectedDays = document.getElementById('selected-days').value
     .split(',')
@@ -124,26 +123,22 @@ const handleAddHabit = (e) => {
   habitTracker.createHabit(name, category, goal, selectedDays);
   resetHabitForm();
   
-  
   renderHabits();
   updateStats();
   updateProgressBar();
 };
 
-
 const resetHabitForm = () => {
   document.getElementById('habit-name').value = '';
   document.getElementById('habit-category').value = '';
   document.getElementById('habit-goal').value = '';
-  document.querySelectorAll('.day-btn').forEach(btn => btn.classList.remove('active'));
+  document.querySelectorAll('#habit-form .day-btn').forEach(btn => btn.classList.remove('active'));
   document.getElementById('selected-days').value = '';
 };
-
 
 const handleFilterChange = () => {
   renderHabits();
 };
-
 
 export const renderHabits = () => {
   const category = filterCategory.value;
@@ -161,7 +156,6 @@ export const renderHabits = () => {
   habitsList.innerHTML = '';
   habits.forEach(habit => renderHabitItem(habit, selectedDate));
 };
-
 
 const showEmptyState = (category) => {
   habitsList.innerHTML = `
@@ -209,7 +203,6 @@ const renderHabitItem = (habit, selectedDate) => {
     </div>
   `;
   
-  // Add event listeners
   const completeBtn = habitElement.querySelector('.complete-btn');
   const editBtn = habitElement.querySelector('.edit-btn');
   const calendarBtn = habitElement.querySelector('.calendar-btn');
@@ -223,12 +216,10 @@ const renderHabitItem = (habit, selectedDate) => {
   habitsList.appendChild(habitElement);
 };
 
-
 const formatDaysDisplay = (days) => {
   const daysOfWeek = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
   return days.map(day => daysOfWeek[day]).join(', ');
 };
-
 
 const toggleHabitCompletion = (habitId, date) => {
   habitTracker.toggleHabitCompletion(habitId, date);
@@ -237,22 +228,28 @@ const toggleHabitCompletion = (habitId, date) => {
   updateProgressBar();
 };
 
-
 const openEditModal = (habit) => {
   document.getElementById('edit-habit-id').value = habit.id;
   document.getElementById('edit-habit-name').value = habit.name;
   document.getElementById('edit-habit-category').value = habit.category;
   document.getElementById('edit-habit-goal').value = habit.goal;
   
-  
+
   document.querySelectorAll('#edit-habit-form .day-btn').forEach(btn => {
-    btn.classList.toggle('active', habit.days.includes(parseInt(btn.dataset.day)));
+    btn.classList.remove('active');
   });
+  
+ 
+  document.querySelectorAll('#edit-habit-form .day-btn').forEach(btn => {
+    if (habit.days.includes(parseInt(btn.dataset.day))) {
+      btn.classList.add('active');
+    }
+  });
+  
   updateSelectedDaysInput('edit-selected-days');
   
   editModal.style.display = 'flex';
 };
-
 
 const closeEditModal = () => {
   editModal.style.display = 'none';
@@ -267,7 +264,6 @@ const handleEditHabit = (e) => {
   const goal = document.getElementById('edit-habit-goal').value.trim();
   const selectedDays = document.getElementById('edit-selected-days').value.split(',').filter(Boolean).map(Number);
   
-  
   if (!name || !category || !goal) {
     alert('Please fill all fields');
     return;
@@ -278,7 +274,6 @@ const handleEditHabit = (e) => {
     return;
   }
   
-
   habitTracker.updateHabit(id, { name, category, goal, days: selectedDays });
   
   closeEditModal();
@@ -286,7 +281,6 @@ const handleEditHabit = (e) => {
   updateStats();
   updateProgressBar();
 };
-
 
 const deleteHabit = (habitId) => {
   if (confirm('Are you sure you want to delete this habit?')) {
@@ -297,7 +291,6 @@ const deleteHabit = (habitId) => {
   }
 };
 
-
 const openCalendarModal = (habit) => {
   const modal = document.getElementById('calendar-modal');
   const calendarEl = document.getElementById('habit-calendar');
@@ -307,70 +300,90 @@ const openCalendarModal = (habit) => {
     window.habitCalendar.destroy();
   }
   
+
+  const completedDates = habit.completedDates || [];
   
   window.habitCalendar = flatpickr(calendarEl, {
     inline: true,
     mode: "multiple",
-    defaultDate: habit.completedDates || [],
+    defaultDate: completedDates,
     dateFormat: "Y-m-d",
     onDayCreate: function(dObj, dStr, fp, dayElem) {
-      if (habit.completedDates.includes(dStr)) {
+      const dateStr = dayElem.dateObj.toISOString().split('T')[0];
+      if (completedDates.includes(dateStr)) {
         dayElem.classList.add('completed');
       }
-      if (habit.missedDates && habit.missedDates.includes(dStr)) {
+      if (habit.missedDates && habit.missedDates.includes(dateStr)) {
         dayElem.classList.add('missed');
       }
     }
   });
   
-  
   modal.querySelector('.modal-header h2').textContent = `Habit: ${habit.name}`;
   
- 
   document.getElementById('save-calendar').onclick = function() {
-    const selectedDates = window.habitCalendar.selectedDates.map(date => 
-      date.toISOString().split('T')[0]
-    );
-    habitTracker.updateHabitDates(habit.id, selectedDates);
-    closeCalendarModal();
-    renderHabits();
+    try {
+      const selectedDates = window.habitCalendar && window.habitCalendar.selectedDates 
+        ? window.habitCalendar.selectedDates.map(date => date.toISOString().split('T')[0])
+        : [];
+      
+      habitTracker.updateHabitDates(habit.id, selectedDates);
+      closeCalendarModal();
+      renderHabits();
+      updateStats();
+      updateProgressBar();
+    } catch (error) {
+      console.error('Error saving calendar dates:', error);
+      alert('There was an error saving the dates. Please try again.');
+    }
   };
   
   modal.style.display = 'flex';
 };
 
-
 const closeCalendarModal = () => {
   document.getElementById('calendar-modal').style.display = 'none';
   if (window.habitCalendar) {
     window.habitCalendar.destroy();
+    window.habitCalendar = null;
   }
 };
-
-
 
 const updateStats = () => {
   const selectedDate = datePicker._flatpickr ? 
     datePicker._flatpickr.selectedDates[0] || new Date() : new Date();
-  const stats = habitTracker.getStats(selectedDate);
   
-  totalHabitsElement.textContent = stats.total;
-  completedTodayElement.textContent = stats.completedToday;
-  bestStreakElement.textContent = stats.bestStreak;
-  missedDaysElement.textContent = stats.missedDays || 0;  
+  try {
+    const stats = habitTracker.getStats(selectedDate);
+    
+    totalHabitsElement.textContent = stats.total;
+    completedTodayElement.textContent = stats.completedToday;
+    bestStreakElement.textContent = stats.bestStreak;
+    missedDaysElement.textContent = stats.missedDays || 0;
+  } catch (error) {
+    console.error('Error updating stats:', error);
+  }
 };
 
- const updateProgressBar = () => {
+const updateProgressBar = () => {
   const selectedDate = datePicker._flatpickr ? 
     datePicker._flatpickr.selectedDates[0] || new Date() : new Date();
-  const stats = habitTracker.getStats(selectedDate);
-  const totalHabits = stats.total;
-  const completedHabits = stats.completedToday;
   
-  completedCountElement.textContent = completedHabits;
-  totalCountElement.textContent = totalHabits;
-  
-  const progressPercentage = totalHabits > 0 ? 
-    Math.round((completedHabits / totalHabits) * 100) : 0;
-  progressBarElement.style.width = `${progressPercentage}%`;
+  try {
+    const stats = habitTracker.getStats(selectedDate);
+    const totalHabits = stats.total;
+    const completedHabits = stats.completedToday;
+    
+    completedCountElement.textContent = completedHabits;
+    totalCountElement.textContent = totalHabits;
+    
+    const progressPercentage = totalHabits > 0 ? 
+      Math.round((completedHabits / totalHabits) * 100) : 0;
+    progressBarElement.style.width = `${progressPercentage}%`;
+  } catch (error) {
+    console.error('Error updating progress bar:', error);
+    progressBarElement.style.width = '0%';
+    completedCountElement.textContent = '0';
+    totalCountElement.textContent = '0';
+  }
 };
